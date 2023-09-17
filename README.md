@@ -9,7 +9,7 @@
 
 ## 개발 환경
 버전 : JDK : 1.8,  SpringBoot : 2.7.15 <br />
-주요 디펜던시 : JPA, Security, Lombok, DevTools, Validation <br />
+주요 디펜던시 : H2 Database, JPA, Security, Lombok, DevTools, Validation <br />
 
 `💾 build.gradle`
 ```
