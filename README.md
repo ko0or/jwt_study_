@@ -1,4 +1,37 @@
-## 사이트 소개
+## REST API
+`[GET] http://localhost:8080/api/user`
+- 현재 로그인된 유저의 정보
+- HTTP HEADER에  JWT 토큰 내용이 필요. ( key: Authorization , value : Bearer 한칸 띄우고 JWT토큰내용 )
+![image](https://github.com/ko0or/jwt_study_/assets/105141296/2b8d5f0d-2d9e-49e4-afb7-00a8782b5be7)
+<br />
+
+
+`[GET] http://localhost:8080/api/user/유저명`
+- (ADMIN 권한만 가능) 특정 유저의 정보를 검색
+- 위와 동일하게 HTTP HEADER에  JWT 토큰 내용이 필요. 
+  
+`[POST] http://localhost:8080/api/signup`
+- 다음 JSON 형식을 HTTP BODY에 담아서 **회원가입**을 진행
+```
+{
+  "username" : "minwoo",
+  "password" : "minwoo",
+  "nickname" : "minwoo"
+}
+```
+`[POST] http://localhost:8080/api/authenticate`
+- 다음 JSON 형식을 HTTP BODY에 담아서 **로그인** 진행
+
+```
+{
+  "username" : "minwoo",
+  "password" : "minwoo",
+  "nickname" : "minwoo"
+}
+```
+<br /><br />
+
+## 참고 자료 (사이트)
 <br />
 
 `인프런 - Spring Boot JWT Tutorial` https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-jwt#
