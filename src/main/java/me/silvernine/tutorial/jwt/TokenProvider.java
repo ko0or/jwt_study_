@@ -3,6 +3,7 @@ package me.silvernine.tutorial.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,9 +19,11 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class TokenProvider implements InitializingBean {
 
 /*
@@ -51,7 +54,7 @@ public class TokenProvider implements InitializingBean {
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
     }
 
-    @Override
+    @Override /* 빈 객체 생성시 실행되는 내용 ( InitializingBean 인터페이스 상속받고, afterPropertiesSet 를 오버 라이딩했기때문 -> https://blog.naver.com/taehwa10404/223108804354 )  */
     public void afterPropertiesSet() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
@@ -60,6 +63,9 @@ public class TokenProvider implements InitializingBean {
     // #. 인증 정보를 받고,  JWT 토큰을 리턴
 
     public String createToken(Authentication authentication) {
+
+        log.info("$$ 토큰 프로바이저 $$");
+
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -67,12 +73,16 @@ public class TokenProvider implements InitializingBean {
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
-                .compact();
+        String newJWT = Jwts.builder()
+                         .setSubject(authentication.getName()) // 유저 ID
+                         .claim(AUTHORITIES_KEY, authorities) // 유저 권한
+                         .signWith(key, SignatureAlgorithm.HS512) // 알고리즘 방식
+                         .setExpiration(validity) // 유효기간
+                         .compact();
+
+        logger.info("@@ 생성된 JWT 토큰 @@ ==>> Bearer " + newJWT);
+
+        return newJWT;
     }
 
 
@@ -85,7 +95,7 @@ public class TokenProvider implements InitializingBean {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Collection<? extends GrantedAuthority> authorities =
+        List<GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
