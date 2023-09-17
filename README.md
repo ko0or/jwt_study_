@@ -25,8 +25,7 @@
 ```
 {
   "username" : "minwoo",
-  "password" : "minwoo",
-  "nickname" : "minwoo"
+  "password" : "minwoo"
 }
 ```
 <br /><br />
