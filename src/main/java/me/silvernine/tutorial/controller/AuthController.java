@@ -1,5 +1,6 @@
 package me.silvernine.tutorial.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.silvernine.tutorial.dto.LoginDto;
 import me.silvernine.tutorial.dto.TokenDto;
@@ -21,46 +22,35 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 
-@RestController
-@RequestMapping("/api")
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
 public class AuthController {
 
-    // 로그인 성공시 Authentication 객체를 만들어주는 용도 ( AuthenticationManager 를 이용 )
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    // Authentication 객체가 생성되었다면(로그인 성공시) 토큰 생성하기위해 필요
-    private final TokenProvider tokenProvider;
-
-    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
-        this.tokenProvider = tokenProvider;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-    }
+    private final AuthenticationManagerBuilder authenticationManagerBuilder; // 로그인 성공시 Authentication 객체를 만들어주는 용도 ( AuthenticationManager 를 이용 )
+    private final TokenProvider tokenProvider; // Authentication 객체가 생성되었다면(로그인 성공시) 토큰 생성하기위해 필요
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
-        log.info("@@## [1] ==>> 로그인 요청받은 ID / PW : " + loginDto );
+        // === 로그인 요청받았을때  ====================================================================== >>
+        log.debug("@@## [1] ==>> 로그인 요청받은 ID / PW : " + loginDto );
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
-
-        log.info("@@## [2] ==>> CustomUserDetailsService 파일에서 오버라이딩한 내용 실행 ");
-        log.info("@@## [2] ==>> 오버라이딩된 내용 => UserDetailsService 클래스 loadUserByUsername 메소드");
-        // 콘솔 로그 찍어보기 -> log.info( authenticationManagerBuilder.getObject().authenticate(authenticationToken).getClass().getName() );
-        // 찍어본 결과 -> org.springframework.security.authentication.UsernamePasswordAuthenticationToken 를 리턴함
-        // (업 캐스팅) Authentication <-  UsernamePasswordAuthenticationToken ( authenticationManagerBuilder 리턴값 )
+        log.debug("@@## [2] ==>> CustomUserDetailsService 파일에서 오버라이딩한 내용 실행 ");
+        log.debug("@@## [2] ==>> UserDetailsService 클래스 loadUserByUsername 메소드");
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        log.info( authenticationManagerBuilder.getObject().authenticate(authenticationToken).getClass().getName() );
-
-
+        log.debug( authenticationManagerBuilder.getObject().authenticate(authenticationToken).getClass().getName() );
 
         // === 로그인 성공시에만 실행 ====================================================================== >>
-        log.info("@@## [7] ==>> SecurityContextHolder.getContext().setAuthentication(authentication);");
+        log.debug("@@## [7] ==>> 인증된 정보를 시큐리티 및 토큰 정보로 저장");
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("@@## [8] ==>> JWT 토큰 만들어서 리턴");
         String jwt = tokenProvider.createToken(authentication);
+        log.debug("@@## [8] ==>> 저장된 JWT 토큰을 리턴 :)");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+
     }
 }

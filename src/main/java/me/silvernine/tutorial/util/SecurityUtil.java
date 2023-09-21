@@ -17,7 +17,6 @@ public class SecurityUtil {
 
 */
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityUtil.class);
 
     private SecurityUtil() {}
 
@@ -29,7 +28,7 @@ public class SecurityUtil {
 
         // NOE (NullPointException) 예방용
         if (authentication == null) {
-            log.info("Security Context에 인증 정보가 없습니다.");
+            log.debug("Security Context에 인증 정보가 없습니다.");
             return Optional.empty();
         }
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 //import jakarta.servlet.http.HttpServletRequest;
 //import jakarta.servlet.http.HttpServletResponse;
@@ -20,13 +21,13 @@ import java.io.IOException;
 
 */
 
-@Component
 @Slf4j
+@Service
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        log.info("403에러 발생 !! -> 로그인은했지만, 필요한 권한이 없는경우");
+        log.debug("403에러 발생 !! -> 로그인은했지만, 필요한 권한이 없는경우");
     }
 
 

@@ -1,5 +1,6 @@
 package me.silvernine.tutorial.config;
 
+import lombok.RequiredArgsConstructor;
 import me.silvernine.tutorial.jwt.JwtAccessDeniedHandler;
 import me.silvernine.tutorial.jwt.JwtAuthenticationEntryPoint;
 import me.silvernine.tutorial.jwt.JwtSecurityConfig;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity // 웹 보안 활성화 ( implements WebSecurityConfigurer 혹은 extends WebSecurityAdapter )
 @EnableGlobalMethodSecurity(prePostEnabled = true) // 기본값은 false, @PreAuthorize 어노테이션을 동작하게 해주는 기능 (컨트롤러단에서 사용)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // ==== JWT 관련 설정들 ==================================================
@@ -24,18 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // JWT 관련 예외처리들 (401, 403 Error)
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
-    // 의존성 주입 -> 여기서 쓰기위해 만들었던 파일들
-    public SecurityConfig(
-            TokenProvider tokenProvider
-            , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-            , JwtAccessDeniedHandler jwtAccessDeniedHandler
-    )
-    {
-        this.tokenProvider = tokenProvider;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-    }
 
 
     // ==== SpringSecurity 관련 설정들 ===================================================

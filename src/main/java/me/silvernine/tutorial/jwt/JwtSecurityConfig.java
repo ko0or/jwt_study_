@@ -1,10 +1,12 @@
 package me.silvernine.tutorial.jwt;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@RequiredArgsConstructor
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 /*
@@ -22,10 +24,7 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
         - JWT 토큰에 대한 유효성 검증
 
  */
-    private TokenProvider tokenProvider;
-    public JwtSecurityConfig(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
+    private final TokenProvider tokenProvider;
 
 
 /*
